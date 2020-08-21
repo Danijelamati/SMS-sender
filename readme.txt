@@ -1,0 +1,3 @@
+react native android app that informs patients about their appointment
+
+readme will be updated....
