@@ -3,10 +3,12 @@ import moment from "moment-timezone";
 
 import { allEvents } from "./calendar";
 import { getObjectItem, setObjectItem } from "./storage";
-import { createDateObject, compareEvents, objectForThisDay } from "./util"; 
+import { createDateObject, compareEvents, objectForThisDay, todayDate } from "./util"; 
 import sendSMS from "./sendSMS";
 
 const { Background } = NativeModules;
+
+
 
 const BackgroundTask = async () => {
     try {
@@ -14,16 +16,28 @@ const BackgroundTask = async () => {
         const events = await allEvents();
         const info = await getObjectItem("info");
         const getSentEvents = await getObjectItem("sentEvents");  
-        const todayDate = moment.tz().format("DD MM YYYY"); 
+        const skipToday = await getObjectItem("notToday");
+        const today = todayDate(); 
         
         if(!info || info.enabled === false){
           console.log("stoping service");
           Background.stopService();
         }
+        
+        if(!skipToday || !(today in skipToday)){
+          const obj = objectForThisDay();
+          obj[today()] = false;
+          await setObj("notToday",  obj);                    
+        }
 
+        if(skipToday[today]){
+          console.log("skiping today");
+          return;
+        }
+        
         if(getSentEvents){
           
-          if(!(todayDate in getSentEvents)){
+          if(!(today in getSentEvents)){
             console.log("doesnt exist")
             await setObjectItem("sentEvents", objectForThisDay());
           }

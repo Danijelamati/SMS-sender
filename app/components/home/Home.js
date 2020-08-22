@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, View, BackHandler,  Dimensions, TouchableOpacity, Image, PermissionsAndroid } from 'react-native';
+import { Text, View, BackHandler,  Dimensions, TouchableOpacity, Image } from 'react-native';
 import moment from "moment-timezone";
 
 import { Background } from "../../util/background";
 import { AppContext } from '../../App';
 import { allEvents } from '../../util/calendar';
-import { countNums, objectForThisDay } from "../../util/util";
+import { countNums, objectForThisDay, todayDate } from "../../util/util";
 import { setObjectItem, getObjectItem } from "../../util/storage";
 import { useFocusEffect } from '@react-navigation/native';
 import style from "../../styles/HomeStyles";
@@ -34,25 +34,7 @@ function Home({navigation}) {
           BackHandler.removeEventListener('hardwareBackPress', () =>  true);
         }
       },[]
-    );
-
-    useEffect( () => {
-      const requestPermission = async () => {
-        try {
-          
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.SEND_SMS,{
-              title: "Permission for sms",
-              buttonPositive: "Dopusti"
-            }            
-          );
-          
-        } catch (err) {
-          console.warn(err);
-        }
-      };
-      requestPermission();  
-    },[]);
+    );    
 
     useEffect( ()=> { 
 
@@ -63,14 +45,26 @@ function Home({navigation}) {
       };
       getEvents(allEvents,setEvents);
 
-      const getNotToday = async(setNot) => {
-        const getNotToday = await getObjectItem("notToday");
-        console.log("getNotToday", getNotToday)
+      const getNotToday = async(setNot, getObj, setObj, today, objForToday) => {
+        const getNotToday = await getObj("notToday");
+        
+        if(!getNotToday || !(today() in getNotToday)){
+          const obj = objForToday();
+          obj[today()] = false;
+          await setObj("notToday",  obj);
+          setNot(() => false);
+          return;
+        }
+        
+        setNot(() => getNotToday[today()]);
+
       }
 
-      getNotToday(setNotToday);
-      
+      getNotToday(setNotToday,getObjectItem, setObjectItem, todayDate, objectForThisDay);
+
+           
     },[]);
+ 
 
     const handleEnabled = async (setObject, obj) => {
   
@@ -82,8 +76,13 @@ function Home({navigation}) {
       setEve(events);
     };      
 
-    const skipToday = (notToday, setNotToday) => {
-      console.log(objectForThisDay());
+    const skipToday = async (notToday, setNotToday, setObject, getObject, objectForThisDay, todayDate) => {
+      
+      const obj = objectForThisDay();
+      obj[todayDate()] = !notToday;
+      await setObject("notToday", obj);      
+      setNotToday(x => !x);
+
     };
 
     const handleActivity = (value, setInf, handleEnabled, getEve, allEve, setEve, Background) =>{ 
@@ -147,11 +146,13 @@ function Home({navigation}) {
           }
           {
             notToday ?
-            <Text>Danas preskačem sa slanjem</Text>
+            <Text style={homeStyles.infoText}>Danas preskačem sa slanjem</Text>
             :
             null
           }
-          
+          {
+            <Text>{console.log("notToday", notToday)}</Text>
+          }
           </View>          
               
         </View>
@@ -179,7 +180,7 @@ function Home({navigation}) {
             </TouchableOpacity>
             <TouchableOpacity
               style={homeStyles.button}
-              onPress={() => skipToday(notToday, setNotToday)}
+              onPress={() => skipToday(notToday, setNotToday, setObjectItem, getObjectItem, objectForThisDay, todayDate)}
             >
               <Text style={homeStyles.text}>Preskoči danas</Text>
             </TouchableOpacity>

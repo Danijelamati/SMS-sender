@@ -56,10 +56,21 @@ const scale = (size, width) => {
   return width / guidelineBaseWidth * size;
 }
 
+const todayDate = () => {
+  date = moment.tz(); 
+  
+  if(date.hour() >= 22){   
+    date.add(1,"days");
+  } 
+
+  return date.format("DD MM YYYY");
+}
+
 export {    
     createDateObject,
     compareEvents,
     countNums,
     objectForThisDay,
-    scale
+    scale,
+    todayDate
 };
