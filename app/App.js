@@ -8,6 +8,7 @@ import MessageInfo from "./components/messageinfo/MessageInfo";
 import Loading from './components/loading/Loading';
 import FirstTime from './components/firsttime/FirstTime';
 import SendNotification from './components/sendnotification/SendNotification';
+import About from './components/about/About';
 
 export const AppContext = createContext();
 
@@ -15,6 +16,7 @@ function App () {
 
   const [info, setInfo] = useState(null);
   const [events, setEvents] = useState([]);  
+  const [sentEvents, setSentEvents] = useState([]);
   const [notToday, setNotToday] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
 
@@ -62,7 +64,7 @@ function App () {
     <NavigationContainer>
       {
         permissionGranted ?
-        <AppContext.Provider value={{info, setInfo, events, setEvents, notToday, setNotToday}}>
+        <AppContext.Provider value={{info, setInfo, events, setEvents, notToday, setNotToday, sentEvents, setSentEvents}}>
           <Stack.Navigator>             
             <Stack.Screen
               name="Loading"
@@ -82,11 +84,17 @@ function App () {
             <Stack.Screen
               name="SendNotification"
               component={SendNotification}
+              options={{title: "Pošalji obavijest"}}
             />                 
             <Stack.Screen
               name="MessageScreen"
               component={MessageInfo}
               options={{title: "Postavke poruke"}}
+            />
+            <Stack.Screen
+              name="About"
+              component={About}
+              options={{title: "O aplikaciji"}}
             />
           </Stack.Navigator> 
         </AppContext.Provider> 

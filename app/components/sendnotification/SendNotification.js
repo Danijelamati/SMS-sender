@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import moment from "moment-timezone";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { View, Button, Text, TextInput, BackHandler, TouchableOpacity } from 'react-native';
+import { View, Text, BackHandler, Dimensions } from 'react-native';
 
-import sendSMS from '../../util/sendSMS';
+import TextModal from "./TextModal";
+import SendModal from "./SendModal";
+import Buttons from './Buttons';
+
 import { allEvents } from "../../util/calendar";
 import { countNums } from '../../util/util';
 import { useFocusEffect } from '@react-navigation/native';
+import styles from "../../styles/SendNotificationStyles";
+
+const { width } = Dimensions.get('window');
+const homeStyles = styles(width);
+
 
 const defStartTime = moment({hours: 0, minutes: 0, seconds: 0, milliseconds: 0}).add(1, "days");
 const defEndTime =  moment({hours: 0, minutes: 0, seconds: 0, milliseconds: 0}).add(2, "days");
@@ -22,8 +30,11 @@ function SendNotification({navigation}) {
     const [endTime, setEndTime] = useState(defEndTime);
 
     const [message, setMessage] = useState(defMessage);
+    const [tempMessage, setTempMessage] = useState("");
     const [events, setEvents] = useState([]);
-    const [change, setChange] = useState(false);
+
+    const [modalVisible, setModalVisible] = useState(false);  
+    const [sendModal, setSendModal] = useState(false); 
 
     useFocusEffect( 
       () => {
@@ -40,8 +51,7 @@ function SendNotification({navigation}) {
 
             const events = await allEve(start.toISOString(), end.toISOString());
             setEve(events);
-            console.log(events);
-            console.log(events.length);
+            
 
         };
         getEvents(allEvents,setEvents, startTime, endTime);
@@ -76,83 +86,52 @@ function SendNotification({navigation}) {
 
         const set = pickTime.get(value);
         set(date);          
-    };
-
-    const SendNotification = async (sendSMS, allEve, start, end, mess) => {
-        const getEvents = await allEve(start.toISOString(), end.toISOString());
-
-        sendSMS(mess, getEvents);
-    };
+    };    
 
     return (
-        <View>
-            {
-            change ? 
-            <TextInput
-            value = {message}
-            onChangeText = { txt => setMessage( () => txt)}            
-            />          
-            :
-            <Text>{message}</Text>
-          }
-          {
-            change ? 
-            <Button 
-              title = {"spremi"}
-              onPress= {() =>{ 
-                setChange(() => false); 
+        <View style={homeStyles.container}>
+          <View style={homeStyles.infoContainer}>
+            <View style={homeStyles.message}>
+              <Text style={homeStyles.text}>{message}</Text>
+            </View>
+            <View style={homeStyles.info}>
+              <Text style={homeStyles.text}>Početno vrijeme: {moment(startTime).format("DD MM YYYY HH:mm")}</Text>
+              <Text style={homeStyles.text}>Krajnje vrijeme: {moment(endTime).format("DD MM YYYY HH:mm")}</Text>  
+              <Text style={homeStyles.text}>Šaljem {countNums(events)} poruka</Text>                              
+              {
+                  moment(startTime) - moment(endTime) >= 0 ?
+                  <Text style={{...homeStyles.text, color: "red"}}>Upozorenje početni datum nemože biti manji ili isti od krajnjeg</Text>
+                  :
+                  null
               }
-              }
-            />            
-            :
-            <Button 
-              title = {"promijeni"}
-              onPress= {() =>{
-                setChange(() => true);
-              }}
-            />
-            } 
-
-
-            <Text>Pocetno vrijeme: {moment(startTime).format("DD MM YYYY HH:mm")}</Text>
+            </View>
+          </View>            
             
-            <Button title="Izaberi pocetno vrijeme" onPress={() => showDatePicker("start")} />
+          <Buttons homeStyles={homeStyles} showDatePicker={showDatePicker} setModalVisible={setModalVisible} setTempMessage={setTempMessage} message={message} startTime={startTime} endTime={endTime}  setSendModal={setSendModal} />
+                          
+          <DateTimePickerModal
+            isVisible={isStartDatePickerVisible}
+            mode="datetime"
+            date={new Date(startTime)}
+            onConfirm={(date) => handleConfirm("start", date)}
+            onCancel={() => hideDatePicker("start")}
+          />
 
-            <DateTimePickerModal
-              isVisible={isStartDatePickerVisible}
-              mode="datetime"
-              date={new Date(startTime)}
-              onConfirm={(date) => handleConfirm("start", date)}
-              onCancel={() => hideDatePicker("start")}
-            />
+          <DateTimePickerModal
+            isVisible={isEndDatePickerVisible}
+            mode="datetime"
+            date={new Date(endTime)}
+            onConfirm={(date) => handleConfirm("end", date)}
+            onCancel={() => hideDatePicker("end")}
+          />
 
-            <Text>Krajnje vrijeme: {moment(endTime).format("DD MM YYYY HH:mm")}</Text>
-            <Button title="Izaberi krajnje vrijeme" onPress={() => showDatePicker("end")} />
-
-            <DateTimePickerModal
-              isVisible={isEndDatePickerVisible}
-              mode="datetime"
-              date={new Date(endTime)}
-              onConfirm={(date) => handleConfirm("end", date)}
-              onCancel={() => hideDatePicker("end")}
-            />
-
-            <Text>
-                Saljem {countNums(events)} poruka
-            </Text>
-
-            {
-                moment(startTime) - moment(endTime) >= 0 ?
-                <Text>"Upozorenje pocetni datum nemoze biti manji il isti od krajnjeg"</Text>
-                :
-                <Button
-                    title={"posalji obavijest"}
-                    onPress={() => SendNotification(sendSMS, allEvents, startTime, endTime, message)}
-                />
-            }
+          <TextModal tempMessage={tempMessage} setTempMessage={setTempMessage} modalVisible={modalVisible} setModalVisible={setModalVisible} setMessage={setMessage} homeStyles={homeStyles}/>              
+          <SendModal homeStyles={homeStyles} sendModal={sendModal} setSendModal={setSendModal} message={message} startTime={startTime} endTime={endTime} /> 
+        </View>
             
-        </View>        
     );
 }
 
 export default SendNotification;
+
+

@@ -5,7 +5,7 @@ import RNCalendarEvents from 'react-native-calendar-events';
 import { allEvents } from "../../util/calendar";
 import { AppContext } from '../../App';
 import { getObjectItem } from "../../util/storage";
-import { createDateObject } from "../../util/util";
+import { createDateObject, todayDate } from "../../util/util";
 
 import physioat from "../../assets/images/physioat.png";
 
@@ -18,7 +18,7 @@ function Loading({navigation}) {
 
     const appContext = useContext(AppContext);
     
-    const { setEvents, setInfo, info, notToday, setNotToday} = appContext;   
+    const { setEvents, setInfo, info, notToday, setNotToday, setSentEvents} = appContext;   
 
     useEffect(
       () => {
@@ -28,10 +28,19 @@ function Loading({navigation}) {
 
           setLoop(true);
 
-          const storage = async (getObject,setInf,setAuthorised,setNot) => {
+          const storage = async (setInf,setAuthorised,setNot, setSent) => {
             try {
-              let inf = await getObject("info");
-              const not = await getObject("notToday");              
+              let inf = await getObjectItem("info");
+              const not = await getObjectItem("notToday");              
+              const sent = await getObjectItem("sentEvents");
+              console.log(sent)
+              
+              if(sent){
+                
+                if(sent[todayDate()].length > 0){                  
+                  setSent(() => sent[todayDate()]);
+                }
+              } 
               
               if(inf){   
                 
@@ -46,7 +55,7 @@ function Loading({navigation}) {
               console.log(err);
             }
           };
-          storage(getObjectItem,setInfo,setAuthorised,setNotToday);
+          storage(setInfo,setAuthorised,setNotToday,setSentEvents);
         })();
       },[]
     );

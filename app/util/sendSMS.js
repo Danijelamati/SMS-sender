@@ -2,7 +2,7 @@ import SendSMS from 'react-native-sms-x';
 import moment from "moment-timezone"; 
 
 const sendSMS = (message, events) => {  
-    console.log("send sms")
+   
     let i = 0;
 
     events.forEach(e => {   

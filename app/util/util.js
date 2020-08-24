@@ -29,6 +29,10 @@ const compareEvents = (events, sentEvents) => {
 
 const countNums = (events) => {
   let i = 0;
+  console.log(!events, events.length === 0)
+  if(!events || events.length === 0){
+    return 0;
+  } 
 
   events.forEach(e => {
     i+=e.description.length;
