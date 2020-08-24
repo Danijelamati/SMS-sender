@@ -32,8 +32,7 @@ function Loading({navigation}) {
             try {
               let inf = await getObjectItem("info");
               const not = await getObjectItem("notToday");              
-              const sent = await getObjectItem("sentEvents");
-              console.log(sent)
+              const sent = await getObjectItem("sentEvents");              
               
               if(sent){
                 
@@ -66,12 +65,10 @@ function Loading({navigation}) {
             if(authorised === false){
                
                 const auth = async () => {
-                    try {
-                      
+                    try {                     
                       
                       await  RNCalendarEvents.requestPermissions();
-                      let checkPermission = await RNCalendarEvents.checkPermissions();  
-                      
+                      let checkPermission = await RNCalendarEvents.checkPermissions();                        
                       
                       while(checkPermission !== "authorized"){
                         await  RNCalendarEvents.requestPermissions();

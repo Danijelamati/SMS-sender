@@ -1,10 +1,10 @@
 import { NativeModules } from 'react-native';
 import moment from "moment-timezone";
 
-import { allEvents } from "./calendar";
-import { getObjectItem, setObjectItem } from "./storage";
-import { createDateObject, compareEvents, objectForThisDay, todayDate } from "./util"; 
-import sendSMS from "./sendSMS";
+import { allEvents } from "../util/calendar";
+import { getObjectItem, setObjectItem } from "../util/storage";
+import { createDateObject, compareEvents, objectForThisDay, todayDate } from "../util/util"; 
+import sendSMS from "../util/sendSMS";
 
 const { Background } = NativeModules;
 
@@ -51,18 +51,18 @@ const BackgroundTask = async () => {
           return;
         }
         
-        if(getSentEvents === null || getSentEvents[todayDate].length === 0 ){    
+        if(getSentEvents === null || getSentEvents[today].length === 0 ){    
           
           const obj = objectForThisDay();
 
-          obj[todayDate] = events;
-          const sent = sendSMS(info.text, obj[todayDate]);
+          obj[today] = events;
+          const sent = sendSMS(info.text, obj[today]);
           
           const saveEvents = await setObjectItem("sentEvents", obj);
           return;
         }   
         
-        const compare = compareEvents(events, getSentEvents[todayDate]);
+        const compare = compareEvents(events, getSentEvents[today]);
         
         if(compare.length === 0){
           console.log("no new events");
@@ -70,7 +70,7 @@ const BackgroundTask = async () => {
         }
 
         const obj = objectForThisDay();
-        obj[todayDate] = getSentEvents[todayDate].concat(compare);
+        obj[today] = getSentEvents[today].concat(compare);
 
         await setObjectItem("sentEvents", obj);
 

@@ -16,15 +16,16 @@ function Info(props) {
         <View style={homeStyles.information}>
         {
           info.enabled ? 
-          <Text style={homeStyles.infoText}>Aplikacija trenutno radi</Text>  
+          <Text style={homeStyles.infoText}>Automatsko slanje trenutno radi</Text>  
           :
-          <Text style={homeStyles.infoText}>Aplikacija trenutno neradi</Text>
+          <Text style={homeStyles.infoText}>Automatsko slanje trenutno neradi</Text>
         }  
         {
           !info.enabled ? 
           null
-          :
-          <Text style={homeStyles.infoText}>Šaljem poruke u {moment(info.time).format("HH:mm")}</Text>   
+          :          
+          <Text style={homeStyles.infoText}>Šaljem automatski poruke od {moment(info.time).format("HH:mm")}</Text> 
+          
         }
         {
           <Text style={homeStyles.infoText}>Danas poslano {countNums(sentEvents)} poruka i {countNums(compared)} u pripremi</Text>

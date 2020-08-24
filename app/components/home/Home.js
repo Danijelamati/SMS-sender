@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, BackHandler,  Dimensions, Alert } from 'react-native';
+import { View, BackHandler,  Dimensions, Alert, Text } from 'react-native';
 
 import Buttons from './Buttons';
 import Info from './Info';
 import Activity from './Activity';
 
-import { Background } from "../../util/background";
+import { Background } from "../../services/background";
 import { AppContext } from '../../App';
 import { allEvents } from '../../util/calendar';
 import { objectForThisDay, todayDate, compareEvents } from "../../util/util";
@@ -22,7 +22,7 @@ const homeStyles = style(width);
 
 function Home({navigation}) {   
 
-    const [notToday, setNotToday] = useState(false);
+    const [notToday, setNotToday] = useState(false);    
 
     const appContext = useContext(AppContext);
     const {info, setInfo, events, setEvents, sentEvents, setSentEvents} = appContext;  
@@ -34,7 +34,7 @@ function Home({navigation}) {
           BackHandler.removeEventListener('hardwareBackPress', () =>  true);
         }
       },[]
-    );    
+    );        
 
     useEffect( ()=> { 
 
@@ -84,26 +84,28 @@ function Home({navigation}) {
     };
 
     const handleActivity =async (value, setInf, setEve) =>{ 
-      
+      console.log("setEve",setEve)
       setInf(inf => {
         return {...inf, enabled: !value};            
       });      
       
       if(!value){
+        console.log("start service")
         setObjectItem("info" , {...info, enabled: !info.enabled});   
         const getEvents = await allEvents();
         setEve(() => getEvents);
         Background.startService();        
 
       } else{
+        console.log("kill service")
         Background.stopService();
         setObjectItem("info", {...info, enabled: !info.enabled});
-      }
-
+      }     
     };
     
     const sendNow = async() => {
       try {
+        console.log("send now")
         const getSentEvents = await getObjectItem("sentEvents");
         const events = await allEvents();
         
@@ -129,7 +131,11 @@ function Home({navigation}) {
         const compare = compareEvents(events, getSentEvents[todayDate()]);
 
         if(compare.length === 0){
-          console.log("no new events");
+          
+          Alert.alert(
+            "Upozorenje",
+            "Nema termina za poslati"
+          );  
           return;
         }
 
@@ -141,22 +147,26 @@ function Home({navigation}) {
         sendSMS(info.text, compare);
 
       } catch (err) { 
-        console.log(err);
+        Alert.alert(
+          "Upozorenje",
+          "Dogodila se greška"
+        );  
       }
     }
 
     
     return (        
       <View style={homeStyles.container}>
+
         <View style={homeStyles.infoContainer}>          
-          <Activity homeStyles={homeStyles} info={info} setInfo={setInfo} setEvents={setEvents} handleActivity={handleActivity}/>
+          <Activity homeStyles={homeStyles} info={info} setInfo={setInfo} setEvents={setEvents} handleActivity={handleActivity} notToday={notToday} setNotToday={setNotToday}/>
 
           <Info homeStyles ={homeStyles} info={info} notToday={notToday} events={events} sentEvents={sentEvents}/> 
+          
         </View>
-        
 
         <Buttons homeStyles={homeStyles} navigation={navigation} sendNow={sendNow} skipToday={skipToday} notToday={notToday} setNotToday={setNotToday}/>        
-        
+       
       </View>
     );
 }

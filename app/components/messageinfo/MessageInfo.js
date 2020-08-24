@@ -39,7 +39,7 @@ export default function MessageInfo ({navigation}){
 
   const store = async( obj, setStore) => {    
     try{      
-      const store = await setStore("info", obj);      
+      await setStore("info", obj);      
     }
     catch(err){
       console.log(err);
