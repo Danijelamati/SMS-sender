@@ -7,7 +7,7 @@ import { AppContext } from "../../App";
 import { setObjectItem } from "../../util/storage";
 import { useFocusEffect } from '@react-navigation/native';
 
-const defaultText = "Podsjecamo vas na vas termin sutra u TERMIN";
+const defaultText = "Podsjećamo vas na vas termin sutra u TERMIN";
 
 const defaultObj = {
     text: "",

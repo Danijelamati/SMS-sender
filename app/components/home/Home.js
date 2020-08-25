@@ -20,12 +20,10 @@ const { width } = Dimensions.get('window');
 const homeStyles = style(width);
 
 
-function Home({navigation}) {   
-
-    const [notToday, setNotToday] = useState(false);    
+function Home({navigation}) { 
 
     const appContext = useContext(AppContext);
-    const {info, setInfo, events, setEvents, sentEvents, setSentEvents} = appContext;  
+    const {info, setInfo, events, setEvents, sentEvents, setSentEvents, notToday, setNotToday} = appContext;  
            
     useFocusEffect( 
       () => {
@@ -84,20 +82,19 @@ function Home({navigation}) {
     };
 
     const handleActivity =async (value, setInf, setEve) =>{ 
-      console.log("setEve",setEve)
+      
       setInf(inf => {
         return {...inf, enabled: !value};            
       });      
       
       if(!value){
-        console.log("start service")
+        
         setObjectItem("info" , {...info, enabled: !info.enabled});   
         const getEvents = await allEvents();
         setEve(() => getEvents);
         Background.startService();        
 
-      } else{
-        console.log("kill service")
+      } else{        
         Background.stopService();
         setObjectItem("info", {...info, enabled: !info.enabled});
       }     
@@ -105,7 +102,7 @@ function Home({navigation}) {
     
     const sendNow = async() => {
       try {
-        console.log("send now")
+        
         const getSentEvents = await getObjectItem("sentEvents");
         const events = await allEvents();
         
