@@ -13,7 +13,6 @@ function Loading({navigation}) {
     
     const [loaded, setLoaded] = useState(false);    
     const [once, setOnce] = useState(false);
-    const [loop, setLoop] = useState(false);
     const [authorised, setAuthorised] = useState();
 
     const appContext = useContext(AppContext);
@@ -25,8 +24,6 @@ function Loading({navigation}) {
         (async () => {
           
           spring.start();
-
-          setLoop(true);
 
           const storage = async (setInf,setAuthorised,setNot, setSent) => {
             try {
@@ -126,7 +123,7 @@ function Loading({navigation}) {
       const timeout = (info,navigation,setOnce,spring,animation) => {  
               
         setOnce(true);        
-        setTimeout(() => navigate(info,navigation,spring,animation), 5000);
+        setTimeout(() => navigate(info,navigation,spring,animation), 4000);
         
       };
       
@@ -142,7 +139,7 @@ function Loading({navigation}) {
 
     return (
         <View style={[styles.container, styles.horizontal]}> 
-                
+            
           <Animated.Image
             style={{ 
             width: "80%",

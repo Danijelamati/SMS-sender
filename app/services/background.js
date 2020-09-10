@@ -8,8 +8,6 @@ import sendSMS from "../util/sendSMS";
 
 const { Background } = NativeModules;
 
-
-
 const BackgroundTask = async () => {
     try {
         
@@ -26,7 +24,7 @@ const BackgroundTask = async () => {
         
         if(!skipToday || !(today in skipToday)){
           const obj = objectForThisDay();
-          obj[today()] = false;
+          obj[today] = false;
           await setObj("notToday",  obj);                    
         }
 

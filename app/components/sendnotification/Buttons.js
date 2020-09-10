@@ -3,10 +3,10 @@ import { View,  Text,  TouchableOpacity } from 'react-native';
 
 function Buttons(props) {
 
-    const {homeStyles, showDatePicker, setModalVisible, setTempMessage, message, setSendModal} = props;
+    const {homeStyles, showDatePicker, setModalVisible, setTempMessage, message, setSendModal, setGeneralMess, setRefresh} = props;
 
     return (
-      <View style={homeStyles.buttonContainer}>
+      <View style={homeStyles.buttonContainer}>        
         <View style={homeStyles.segment}>
           <TouchableOpacity
             style={homeStyles.button}  
@@ -33,11 +33,25 @@ function Buttons(props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={homeStyles.button}
-            onPress={() => setSendModal(true)}
+            onPress={() => setGeneralMess(x => !x)}
           >
+            <Text style={homeStyles.buttonText}>Generalna poruka</Text>
+          </TouchableOpacity>
+        </View>  
+        <View style={homeStyles.segment}>
+          <TouchableOpacity 
+              style={homeStyles.button}
+              onPress={() => setRefresh(x => x+1)}
+              >            
+                <Text style={homeStyles.buttonText}>Osvježi</Text>             
+            </TouchableOpacity>
+          <TouchableOpacity
+              style={homeStyles.button}
+              onPress={() => setSendModal(true)}
+            >
             <Text style={homeStyles.buttonText}>Pošalji</Text>
           </TouchableOpacity>
-        </View>
+        </View>      
       </View>
     );
 }

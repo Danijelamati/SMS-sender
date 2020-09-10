@@ -23,9 +23,9 @@ function ActivateModul(props) {
                         <Text style={homeStyles.text}>Vrijeme za automatsko slanje je prošlo, želite li preskočiti slanje danas?</Text>
                         {
                             skipToday ?
-                            <Text style={homeStyles.text}>Danas preskačem slanje</Text>
+                            <Text style={{...homeStyles.text, paddingTop: "10%"}}>Danas preskačem slanje</Text>
                             :
-                            <Text style={homeStyles.text}>Danas šaljem</Text>
+                            <Text style={{...homeStyles.text, paddingTop: "10%"}}>Danas nepreskačem slanje</Text>
                         }
                     </View>   
                     <View style={homeStyles.modalButtons}>
@@ -33,13 +33,13 @@ function ActivateModul(props) {
                         style={homeStyles.modalButton}
                         onPress={() => setSkipToday(true)}
                         >
-                        <Text style={homeStyles.buttonText}>Preskoči</Text>
+                        <Text style={homeStyles.modalButtonText}>Preskoči</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                         style={homeStyles.modalButton}
                         onPress={() => setSkipToday(false)}
                         >
-                        <Text style={homeStyles.buttonText}>Nepreskači</Text>
+                        <Text style={homeStyles.modalButtonText}>Nepreskači</Text>
                         </TouchableOpacity>
                     </View>                 
                     
@@ -66,13 +66,13 @@ function ActivateModul(props) {
                             
                         }}
                         >
-                        <Text style={homeStyles.buttonText}>Uključi</Text>
+                        <Text style={homeStyles.modalButtonText}>Uključi</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                         style={homeStyles.modalButton}
                         onPress={() => setModalView(false)}
                         >
-                        <Text style={homeStyles.buttonText}>Odbaci</Text>
+                        <Text style={homeStyles.modalButtonText}>Odbaci</Text>
                         </TouchableOpacity>
                     </View>                      
                 </View>                  

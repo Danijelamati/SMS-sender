@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Text, View, TextInput, Button, BackHandler, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View,  BackHandler, TouchableOpacity, Dimensions } from 'react-native';
 import moment from "moment-timezone";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -33,19 +33,7 @@ export default function MessageInfo ({navigation}){
         BackHandler.removeEventListener('hardwareBackPress', () => true);
       }
     },[]
-  );
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = () => {
-    hideDatePicker();    
-  };
+  ); 
 
   const store = async( obj, setStore) => {    
     try{      
@@ -80,7 +68,7 @@ export default function MessageInfo ({navigation}){
             </TouchableOpacity>
             <TouchableOpacity
               style={messStyles.button}
-              onPress={() => showDatePicker()}
+              onPress={() => setDatePickerVisibility(true)}
             >
               <Text style={messStyles.buttonText}>Izaberi vrijeme</Text>
             </TouchableOpacity>
@@ -98,20 +86,29 @@ export default function MessageInfo ({navigation}){
                 return;
               }
               
-              handleConfirm();
+              setDatePickerVisibility(false);
               setInfo( inf => {
                 return {...inf, time: date};
               });  
               store({...info, time: date}, setObjectItem);
             } }
-            onCancel={hideDatePicker}
+            onCancel={() => setDatePickerVisibility(false)}
           />
             
           <MessModal messStyles={messStyles} modalVisible={modalVisible} setModalVisible={setModalVisible} info={info} setInfo={setInfo}/>
           <WarningModal messStyles={messStyles} warningModal={warningModal} setWarningModal={setWarningModal} info={info} setInfo={setInfo} timeToConsider={timeToConsider} setDatePickerVisibility={setDatePickerVisibility} />
-
        </View>
     );
 };
+
+/*
+
+
+
+          
+
+
+*/
+
 
 

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { scale } from "../util/util";
 
-const MessInfoStyles = (width) => {
+const FirstTimeStyles = (width) => {
     return StyleSheet.create({
         container: {
             flex: 1   
@@ -11,8 +11,8 @@ const MessInfoStyles = (width) => {
             flexDirection: "column"
           },
           text:{
-            fontSize: scale(18,width),
-            fontWeight: "bold"
+              fontSize: scale(22,width),
+              fontWeight: "bold"
           },
           title:{
             fontSize: scale(25, width),
@@ -38,8 +38,9 @@ const MessInfoStyles = (width) => {
             borderColor: "navy",
           },
           buttonText:{
-            fontSize: scale(19,width),
-            fontWeight: "bold"
+            fontSize: scale(17,width),
+            fontWeight: "bold",
+            textTransform: "uppercase"
           },
           modal:{
               flex: 1,            
@@ -101,4 +102,4 @@ const MessInfoStyles = (width) => {
 };
 
 
-export default MessInfoStyles;
+export default FirstTimeStyles;

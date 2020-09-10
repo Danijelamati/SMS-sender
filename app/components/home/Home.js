@@ -13,6 +13,8 @@ import { setObjectItem, getObjectItem } from "../../util/storage";
 import { useFocusEffect } from '@react-navigation/native';
 import style from "../../styles/HomeStyles";
 import sendSMS from "../../util/sendSMS";
+import SendNow from './SendNow';
+import SkipModal from './SkipModal';
 
 
 const { width } = Dimensions.get('window');
@@ -25,6 +27,11 @@ function Home({navigation}) {
     const appContext = useContext(AppContext);
     const {info, setInfo, events, setEvents, sentEvents, setSentEvents, notToday, setNotToday} = appContext;  
            
+    const [sendModal, setSendModal] = useState(false);
+    const [refresh, setRefresh] = useState(0);
+
+    const [skipModal, setSkipModal] = useState(false);
+
     useFocusEffect( 
       () => {
         BackHandler.addEventListener('hardwareBackPress', () => true);
@@ -32,10 +39,10 @@ function Home({navigation}) {
           BackHandler.removeEventListener('hardwareBackPress', () =>  true);
         }
       },[]
-    );        
+    );      
 
     useEffect( ()=> { 
-
+      
       const getEve = async(setEve) => {
 
           const events = await allEvents();
@@ -70,7 +77,7 @@ function Home({navigation}) {
       };
       getSentEvents(setSentEvents);
           
-    },[]);
+    },[refresh]);
 
     const skipToday = async (notToday, setNotToday) => {
       
@@ -162,8 +169,10 @@ function Home({navigation}) {
           
         </View>
 
-        <Buttons homeStyles={homeStyles} navigation={navigation} sendNow={sendNow} skipToday={skipToday} notToday={notToday} setNotToday={setNotToday}/>        
-       
+        <Buttons homeStyles={homeStyles} navigation={navigation} skipToday={skipToday} notToday={notToday} setNotToday={setNotToday} setSendModal={setSendModal} setRefresh={setRefresh} info={info} setSkipModal={setSkipModal}/>   
+        <SendNow homeStyles={homeStyles} sendModal={sendModal} setSendModal={setSendModal} sendNow={sendNow}/>     
+
+        <SkipModal homeStyles={homeStyles} skipModal={skipModal} setSkipModal={setSkipModal} setNotToday={setNotToday} skipToday={skipToday} />
       </View>
     );
 }

@@ -17,7 +17,7 @@ const allEvents = async (start = null, end = null) =>  {
         start.add(1, "days");
         end.add(2,"days");
       }
-
+      
       start = start.toISOString();
       end = end.toISOString();      
     } 

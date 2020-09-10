@@ -3,7 +3,7 @@ import { View, Modal, Text, TouchableOpacity, TextInput } from 'react-native';
 
 function TextModal(props) {
 
-    const { tempMessage, setTempMessage, modalVisible, setModalVisible, setMessage, homeStyles } = props;
+    const { tempMessage, setTempMessage, modalVisible, setModalVisible, setMessage, homeStyles, saveMessage } = props;
     
     return (
             <Modal
@@ -27,7 +27,8 @@ function TextModal(props) {
                       style={homeStyles.modalButton}
                       onPress={() =>{
                         setMessage( () => tempMessage);
-                        setModalVisible(false);
+                        saveMessage(tempMessage);
+                        setModalVisible(false);                        
                       }}
                     >
                       <Text style={homeStyles.buttonText}>Spremi</Text>
@@ -35,7 +36,7 @@ function TextModal(props) {
                     <TouchableOpacity
                       style={homeStyles.modalButton}
                       onPress={() => {
-                        setModalVisible(false);
+                        setModalVisible(false);                       
                       }}
                     >
                       <Text style={homeStyles.buttonText}>Odbaci</Text>

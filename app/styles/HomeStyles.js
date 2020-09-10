@@ -5,7 +5,7 @@ const homeStyles = (width) => {
 
     return StyleSheet.create({
         container: {
-          flex: 1   
+          flex: 1
         },
         infoContainer:{
           flex: 3,
@@ -35,7 +35,8 @@ const homeStyles = (width) => {
           alignItems: "center",
         },
         infoText:{
-          fontSize: scale(14,width)
+          fontSize: scale(14,width),
+          fontWeight: "bold"
         },
         buttonsContainer:{
           flex: 2
@@ -57,10 +58,17 @@ const homeStyles = (width) => {
           
         },
         text: {
-          fontSize: scale(15, width)
+          fontSize: scale(15, width),
+          fontWeight: "bold"
         },
         textLarge:{
-          fontSize: scale(20, width)
+          fontSize: scale(20, width),
+          fontWeight: "bold",
+        },
+        buttonText:{
+          fontSize: scale(15, width),
+          fontWeight: "bold",
+          textTransform: "uppercase"
         },
         modal:{
             flex: 1,            
@@ -108,8 +116,13 @@ const homeStyles = (width) => {
     
           borderWidth: 1,
           borderColor: "navy",
-          borderRadius: 20,  
+          borderRadius: 20
         },
+        modalButtonText:{
+          fontSize: scale(12, width),
+          fontWeight: "bold",
+          textTransform: "uppercase"
+        }
           
       });    
 }

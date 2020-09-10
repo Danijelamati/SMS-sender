@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { View, Modal, Text, TouchableOpacity, TextInput } from 'react-native';
 
 import { setObjectItem } from "../../util/storage";
@@ -6,8 +6,8 @@ import { setObjectItem } from "../../util/storage";
 function MessModal(props) {
     
     const {messStyles, modalVisible, setModalVisible, info, setInfo} = props;
-    const [tempMessage, setTempMessage] = useState(info.text);    
-
+    const [tempMessage, setTempMessage] = useState(info.text);   
+  
     return (
         <Modal
                 animationType="slide"

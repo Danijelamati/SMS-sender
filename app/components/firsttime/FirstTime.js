@@ -1,16 +1,22 @@
-import React ,{useContext, useState, useEffect} from 'react';
-import { View, Button, Text, TextInput, BackHandler } from 'react-native';
+import React ,{useContext, useState } from 'react';
+import { View, Text, BackHandler, Dimensions, TouchableOpacity } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from "moment-timezone";
 
 import { AppContext } from "../../App";
+import style from "../../styles/FirstTimeStyles";
 
 import { setObjectItem } from "../../util/storage";
 import { useFocusEffect } from '@react-navigation/native';
+import ChangeTextModal from './ChangeTextModal';
 
-const defaultText = "Podsjećamo vas na vas termin sutra u TERMIN";
+const { width } = Dimensions.get("window")
+const firstTimeStyles = style(width);
+
+const defaultText = "Podsjećamo vas na vaš termin sutra u TERMIN";
 
 const defaultObj = {
-    text: "",
+    text: defaultText,
     time: new Date(),
     enabled: false
 };
@@ -20,11 +26,10 @@ defaultObj.time.setMinutes(0);
 defaultObj.time.setSeconds(0);
 
 function FirstTime({navigation}) {
-
-    const [change, setChange] = useState(false);
+    
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [information, setInformation] = useState(defaultObj);
-    const [changeText, setChangeText] = useState("");
+    const [textModal, setTextModal] = useState(false);
 
     const appContext = useContext(AppContext);
     const { setInfo } = appContext;
@@ -36,108 +41,75 @@ function FirstTime({navigation}) {
             BackHandler.removeEventListener('hardwareBackPress', () =>  true);
           }
         },[]
-      );
+      ); 
 
-    const showDatePicker = () => {
-        setDatePickerVisibility(true);
-      };
-    
-    const hideDatePicker = () => {
-        setDatePickerVisibility(false);
-    };
-    
-    const handleConfirm = (date, sInf) => {
-        hideDatePicker();
-        sInf( inf => {
-          return {...inf, time: date};
-        });  
-    };
-
-    const finish = async(nav, setInf, obj, defText, setObject, notToday) => {
+    const finish = async( setInf, obj) => {
         try {
-            if(obj.text === ""){
-                obj.text = defText;
-            }  
-            
-            await setObject("info", obj);            
-            
+                        
+            await setObjectItem("info", obj);   
             
             setInf( () => obj);        
-            nav.navigate("Home");
+            navigation.navigate("Home");
             
         } catch (err) {
             console.log(err);
         }
-        
-        
     };
 
-    useEffect(
-        () => {
-          BackHandler.addEventListener("hardwareBackPress", null);
-        },[]
-      );
-
     return (
-        <View>
-            {
-            change ? 
-            <TextInput
-            value = {changeText}
-            onChangeText = { txt => setChangeText(() => txt) }
-            />          
-            :
-            <Text>{
-                !information.text ? 
-                defaultText.replace(/TERMIN/g, "17:00").replace(/DATUM/g, "17.04.1996") 
-                : 
-                information.text.replace(/TERMIN/g, "17:00").replace(/DATUM/g, "17.04.1996")}</Text>
-            }
-            {
-            change ? 
-            <>
-                <Button 
-                title = {"spremi"}
-                onPress= {() =>{
-                     setChange(() => false);
-                     setInformation( inf => {
-                         return {...inf, text: changeText};
-                     })
-                    }}
-                />                    
-                <Button
-                title = {"vrati na staro"}
-                onPress= {() => setChange(() => false)}
-                />  
-            </>      
-            :
-            <Button 
-              title = {"promijeni"}
-              onPress= {() =>{
-                   setChange(() => true);
-                   setChangeText( () => {
-                    return !information.text ? defaultText : information.text ;
-                   });
-                }}
-            />
-            } 
-            <Text>{information.time.toLocaleTimeString().slice(0,5)}</Text>            
-            <Button title="Izaberi vrijeme" onPress={showDatePicker} />
+        <View style={firstTimeStyles.container}>
+
+            <View style={firstTimeStyles.infoContainer}>
+                <View style={{...firstTimeStyles.half, flex: 7}}>
+                <Text style={firstTimeStyles.title}>Text poruke:</Text>
+                <Text style={firstTimeStyles.text}>
+                    {information.text}
+                </Text>
+                </View>
+                <View style={{...firstTimeStyles.half, flex: 3}}>
+                <Text style={firstTimeStyles.text}>
+                    Automatsko slanje će početi u {moment(information.time).format("HH:mm")}             
+                </Text>
+                </View>
+            </View> 
+            <View style={firstTimeStyles.buttons}>
+                <TouchableOpacity
+                style={firstTimeStyles.button}
+                onPress={() => setTextModal(true) }
+                >
+                <Text style={firstTimeStyles.buttonText}>Text poruke</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                style={firstTimeStyles.button}
+                onPress={() => setDatePickerVisibility(() => true)}
+                >
+               <Text style={firstTimeStyles.buttonText}>Izaberi vrijeme</Text>
+                </TouchableOpacity>            
+            </View>
+            <View style={firstTimeStyles.buttons}>
+                <TouchableOpacity
+                style={firstTimeStyles.button}
+                onPress={() => finish(setInfo, information) }
+                >
+                <Text style={firstTimeStyles.buttonText}>Spremi i nastavi</Text>
+                </TouchableOpacity>                
+            </View>           
 
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="time"
                 date={information.time}
-                onConfirm={(date) => handleConfirm(date, setInformation)}
-                onCancel={hideDatePicker}
-            />
+                onConfirm={(date) =>{
+                    setDatePickerVisibility(false);
+                    setInformation( inf => {
+                        return {...inf, time: date};
+                      }); 
+                    
+                } }
+                onCancel={() => setDatePickerVisibility(false)}
+            />     
 
-            
-
-            <Button 
-                title={"spremi i nastavi"}
-                onPress={() => finish(navigation, setInfo, information, defaultText, setObjectItem)}
-            />
+            <ChangeTextModal firstTimeStyles={firstTimeStyles} textModal={textModal} setTextModal={setTextModal} information={information} setInformation={setInformation} />
             
         </View>
     );

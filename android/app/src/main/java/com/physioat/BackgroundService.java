@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat;
 import android.app.NotificationManager;
 import android.app.NotificationChannel;
 import android.os.Build;
+import android.graphics.BitmapFactory;
 
 import com.facebook.react.HeadlessJsTaskService;
 
@@ -66,9 +67,10 @@ public class BackgroundService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("PhysioAt")
-                .setContentText("Aplikacija je aktivna")
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("SMS-sender")
+                .setContentText("Aplikacija je aktivna") 
+                .setSmallIcon(R.mipmap.ic_launcher_round)                
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round))
                 .setContentIntent(contentIntent)
                 .setOngoing(true)
                 .build();

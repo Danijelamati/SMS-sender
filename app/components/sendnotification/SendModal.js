@@ -3,21 +3,44 @@ import { Modal, Alert, View, Text, TouchableOpacity } from 'react-native';
 
 import sendSMS from "../../util/sendSMS";
 import { allEvents } from "../../util/calendar";
+import { generaliseEvents } from "../../util/util";
 
 function SendModal(props) {
 
-    const {homeStyles, sendModal, setSendModal, message, startTime, endTime } = props;
+    const {homeStyles, sendModal, setSendModal, message, startTime, endTime, generalMess } = props;
 
     const SendNotification = async (start, end, mess) => {
-        const getEvents = await allEvents(start.toISOString(), end.toISOString());
+        let events = await allEvents(start.toISOString(), end.toISOString());
 
-        if(getEvents.length === 0){
+        if(events.length === 0){
           Alert.alert(
               "Upozorenje",
               "Nemogu poslati obavijest zbog nedovoljnog broja termina."
-          )
+          );
+          return;
         }
-        sendSMS(mess, getEvents);
+
+        if(message.length === 0){
+          Alert.alert(
+              "Upozorenje",
+              "Poruka nemože biti prazna."
+          );
+          return;
+        }
+
+        if(generalMess && (message.match(/DATUM/i || message.match(/TERMIN/i)))){
+          Alert.alert(
+            "Upozorenje",
+            "U generalnoj poruci nemogu biti DATUM i TERMIN."
+        );
+        return;
+        }        
+
+        if(generalMess && events.length > 1){
+          events= generaliseEvents(events);          
+        }
+        
+        sendSMS(mess, events);
     };
 
     return (

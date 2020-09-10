@@ -21,10 +21,10 @@ function Info(props) {
           <Text style={homeStyles.infoText}>Automatsko slanje trenutno neradi</Text>
         }  
         {
-          !info.enabled ? 
-          null
-          :          
+          info.enabled ? 
           <Text style={homeStyles.infoText}>Šaljem automatski poruke od {moment(info.time).format("HH:mm")}</Text> 
+          :          
+          <Text style={homeStyles.infoText}>Automatske poruke su namještene na {moment(info.time).format("HH:mm")}</Text> 
           
         }
         {

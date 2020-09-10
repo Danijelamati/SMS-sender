@@ -8,7 +8,7 @@ const notificationStyles = (width) => {
             flex: 1
         },
         infoContainer:{
-            flex: 3
+            flex: 4
         },
         message:{
             flex:3,
@@ -21,10 +21,11 @@ const notificationStyles = (width) => {
             alignItems: "center"
         },
         text:{
-            fontSize: scale(16,width),   
+            fontSize: scale(14,width),
+            fontWeight: "bold"   
         },
         buttonContainer:{
-            flex: 1
+            flex: 3
         },
         segment:{
             flex: 1,
@@ -42,7 +43,9 @@ const notificationStyles = (width) => {
             
         },
         buttonText: {
-            fontSize: scale(16, width)
+            fontSize: scale(15, width),
+            fontWeight: "bold",
+            textTransform: "uppercase"
         },
         modal:{
             flex: 1,            
@@ -72,6 +75,7 @@ const notificationStyles = (width) => {
         },
         modalTextInput:{
             height:"100%",
+            fontWeight: "bold"
         },
         modalButtons:{
             flex: 1,
@@ -96,7 +100,8 @@ const notificationStyles = (width) => {
             borderRadius: 20,  
         },
         modalText:{
-            fontSize: scale(16,width)
+            fontSize: scale(16,width),
+            fontWeight: "bold"
         }
 
     });

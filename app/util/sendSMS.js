@@ -4,19 +4,20 @@ import moment from "moment-timezone";
 const sendSMS = (message, events) => {  
    
     let i = 0;
+    console.log(events);
+    events.forEach(event => {   
+        
+        const startDateFormated = moment.tz(event.startDate, "Europe/Berlin");
+        
+        const time = startDateFormated.format("HH:mm");
+        const date = startDateFormated.format("DD.MM");  
+        
+        let string = message
+            .replace(/TERMIN/g, time)
+            .replace(/DATUM/g, date)
+            .replace(/RED\s+|RED/g, "\n");
 
-    events.forEach(e => {   
-        
-        const startDateFormated = moment.tz(e.startDate, "Europe/Berlin").format("DD MM YYYY HH:mm");
-        const endTime = moment.tz(e.endDate, "Europe/Berlin").format("HH:mm");
-        
-        const time = `${startDateFormated.split(" ")[3]} - ${endTime}`;
-        const date =  startDateFormated.slice(0,startDateFormated.length-5);  
-        
-        let string = message.replace(/TERMIN/g, time);
-        string = string.replace(/DATUM/g, date);
-
-        const nums = e.description;
+        const nums = event.description;
         
         nums.forEach( num => {
             SendSMS.send(i, num , string, (msg)=>{ console.log(msg) });

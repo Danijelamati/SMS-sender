@@ -40,6 +40,20 @@ const countNums = (events) => {
   return i;
 };
 
+const generaliseEvents = (events) => {
+
+  const nums = events.map(e => e.description);
+  
+  const reducer = (arr1, arr2) => [
+    ...arr1,
+    ...arr2.filter( x => !arr1.includes(x))
+  ];
+  
+  const sym = (...args) => [...new Set(args.reduce(reducer))];
+
+  return [{"startDate": " ", "endDate": " ", "description": sym(...nums)}];
+};
+
 const objectForThisDay = () => {
   const obj = {};
   let time = moment.tz();  
@@ -74,6 +88,7 @@ export {
     createDateObject,
     compareEvents,
     countNums,
+    generaliseEvents,
     objectForThisDay,
     scale,
     todayDate
